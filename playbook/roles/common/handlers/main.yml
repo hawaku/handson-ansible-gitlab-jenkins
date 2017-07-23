@@ -1,0 +1,3 @@
+---
+- name: restart vm
+  debug: msg="Restart VM from Azure Portal"

@@ -1,0 +1,19 @@
+---
+- name: packages | install common packages
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time=86400
+  with_items:
+    - 'python-apt'
+    - 'git'
+    - 'sysstat'
+  when: ansible_os_family == 'Debian'
+
+- name: packages | install sysv-rc-conf
+  apt: name=sysv-rc-conf state=present
+  when: ansible_os_family == 'Debian' and ansible_distribution_major_version|int <= 14
+
+- name: packages | disable apt-daily
+  service: name={{ item }} state=stopped enabled=no
+  with_items:
+    - apt-daily.service
+    - apt-daily.timer
+  when: ansible_os_family == 'Debian' and ansible_distribution_major_version|int >= 16

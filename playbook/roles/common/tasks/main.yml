@@ -1,0 +1,17 @@
+---
+- include: timezone.yml
+  tags:
+    - timezone
+
+- include: waagent.yml
+  tags:
+    - waagent
+
+- include: packages.yml
+  tags:
+    - packages
+
+- include: rcS.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - rcS

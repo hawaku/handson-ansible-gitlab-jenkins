@@ -1,0 +1,29 @@
+---
+- name: jenkins | create docker directory
+  file: path={{ item.path }} state=directory recurse=yes owner={{ item.owner }} group={{ item.group }}
+  with_items:
+    - { path: "{{ docker_jenkins_project_src }}/jenkins_home", owner: 1000, group: 1000 }
+
+- name: jenkins | copy Dockerfiles
+  copy: src={{ item }} dest={{ docker_jenkins_project_src }}/{{ item }}
+  with_items:
+    - 'Dockerfile'
+
+- name: jenkins | create docker-compose.yml
+  template: src=docker-compose.yml.j2 dest={{ docker_jenkins_project_src }}/docker-compose.yml
+
+- name: jenkins | docker build
+  command: docker-compose build
+  args:
+    chdir: "{{ docker_jenkins_project_src }}"
+
+# docker
+- name: jenkins | docker up
+  docker_service:
+    project_name : "jenkins"
+    project_src: "{{ docker_jenkins_project_src }}"
+    state: present
+    build: yes
+  register: output
+
+- debug: var=output

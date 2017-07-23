@@ -1,0 +1,19 @@
+---
+- name: gitlab | create docker directory
+  file: path={{ item.path }} state=directory recurse=yes
+  with_items:
+    - { path: "{{ docker_gitlab_project_src }}" }
+
+- name: gitlab | create docker-compose.yml
+  template: src=docker-compose.yml.j2 dest={{ docker_gitlab_project_src }}/docker-compose.yml
+
+# docker
+- name: gitlab | docker up
+  docker_service:
+    project_name : "gitlab"
+    project_src: "{{ docker_gitlab_project_src }}"
+    state: present
+    build: yes
+  register: output
+
+- debug: var=output

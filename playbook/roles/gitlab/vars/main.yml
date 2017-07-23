@@ -1,0 +1,2 @@
+---
+docker_gitlab_project_src: "{{ extra_datadrive1 }}/docker/gitlab"

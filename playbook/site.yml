@@ -1,0 +1,20 @@
+---
+- hosts: jenkins
+  become: yes
+  roles:
+    - { role: common, tags: [common] }
+    - { role: docker, tags: [docker] }
+    - { role: jenkins, tags: [jenkins] }
+
+- hosts: gitlab
+  become: yes
+  roles:
+    - { role: common, tags: [common] }
+    - { role: docker, tags: [docker] }
+    - { role: gitlab, tags: [gitlab] }
+
+- hosts: web
+  become: yes
+  roles:
+    - { role: common, tags: [common] }
+    - { role: httpd, tags: [httpd] }

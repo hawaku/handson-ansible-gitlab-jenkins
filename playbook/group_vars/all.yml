@@ -1,0 +1,9 @@
+---
+docker_users:
+
+httpd_users:
+
+extra_datadrive1: /opt
+
+gitlab_hostname:
+jenkins_hostname:

@@ -1,0 +1,15 @@
+jenkins:
+  build: .
+  hostname: {{ jenkins_hostname }}
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /etc/localtime:/etc/localtime:ro
+    - {{ docker_jenkins_project_src }}/jenkins_home:/var/jenkins_home
+    - /var/www/html:/var/www/html
+  environment:
+    - HOST_JENKINS_HOME={{ docker_jenkins_project_src }}/jenkins_home
+    - JAVA_OPTS=-Dorg.apache.commons.jelly.tags.fmt.timeZone=Asia/Tokyo -Duser.timezone=Asia/Tokyo
+  ports:
+    - 8080:8080
+    - 50000:50000
+  restart: always

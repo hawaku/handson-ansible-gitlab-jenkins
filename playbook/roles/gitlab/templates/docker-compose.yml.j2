@@ -1,0 +1,20 @@
+gitlab:
+  image: 'gitlab/gitlab-ce:latest'
+  restart: always
+  hostname: {{ gitlab_hostname }}
+  environment:
+    GITLAB_OMNIBUS_CONFIG: |
+      gitlab_rails['gitlab_shell_ssh_port'] = 52222
+      gitlab_rails['time_zone'] = 'Asia/Tokyo'
+      gitlab_rails['gitlab_username_changing_enabled'] = false
+      external_url 'http://{{ gitlab_hostname }}:8081'
+  ports:
+    - '8081:8081'
+#    - '443:443'
+    - '52222:22'
+    - '54567:54567'
+  volumes:
+    - {{ docker_gitlab_project_src }}/config:/etc/gitlab
+    - {{ docker_gitlab_project_src }}/logs:/var/log/gitlab
+    - {{ docker_gitlab_project_src }}/data:/var/opt/gitlab
+    - /etc/localtime:/etc/localtime:ro

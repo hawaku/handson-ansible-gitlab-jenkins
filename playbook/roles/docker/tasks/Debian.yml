@@ -1,0 +1,53 @@
+---
+- name: docker | install apt-transport-https ca-certificates
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time=86400
+  with_items:
+    - 'apt-transport-https'
+    - 'ca-certificates'
+
+- name: docker | apt-key docker
+  apt_key: keyserver='hkp://p80.pool.sks-keyservers.net:80' id='58118E89F3A912897C070ADBF76221572C52609D'
+
+- name: docker | apt-repository docker
+  apt_repository: repo="deb https://apt.dockerproject.org/repo {{ ansible_distribution|lower }}-{{ ansible_distribution_release|lower }} main"
+
+- name: docker | purge lxc-docker
+  apt: name='lxc-docker' state=absent purge=yes
+
+- name: docker | uname
+  command: uname -r
+  register: uname
+
+- name: docker | install linux-image-extra
+  apt: name=linux-image-extra-{{ uname.stdout }} state=present
+  when: uname|changed
+
+- name: docker | install docker and pip
+  apt: name={{ item }} state=present autoremove=yes
+  with_items:
+    - 'docker-engine'
+    - 'python-pip'
+
+- name: docker | install docker-compose
+  pip: name=docker-compose version=1.8.1
+
+- name: docker | install docker-py
+  pip: name=docker-py version=1.9.0
+
+- name: docker | create docker group
+  group: name={{ docker_group }}
+
+- name: docker | add user to docker group
+  user: name={{ item }} groups={{ docker_group }} append=yes
+  with_items: '{{ docker_users }}'
+
+- name: update ufw
+  lineinfile: dest=/etc/default/ufw regexp="DEFAULT_FORWARD_POLICY=" line='DEFAULT_FORWARD_POLICY="ACCEPT"'
+  notify: reload ufw
+
+- name: docker | Adjust memory and swap accounting
+  lineinfile: dest=/etc/default/grub regexp="GRUB_CMDLINE_LINUX=" line='GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"'
+  notify: update grub
+
+- name: docker | start docker
+  service: name=docker state=started enabled=yes

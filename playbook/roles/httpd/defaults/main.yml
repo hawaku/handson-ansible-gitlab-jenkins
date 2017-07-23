@@ -1,0 +1,5 @@
+---
+httpd_installs:
+  - apache2
+  - apache2-dev
+  - apache2-utils

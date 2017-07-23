@@ -1,0 +1,14 @@
+---
+- name: waagent | swap
+  lineinfile:
+  args:
+    dest: '/etc/waagent.conf'
+    backup: 'no'
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+    insertafter: '{{ item.insertafter }}'
+  with_items:
+    - { regexp: '^ResourceDisk.Format=', line: 'ResourceDisk.Format=y', insertafter: '' }
+    - { regexp: '^ResourceDisk.EnableSwap=', line: 'ResourceDisk.EnableSwap=y', insertafter: '' }
+    - { regexp: '^ResourceDisk.SwapSizeMB=', line: 'ResourceDisk.SwapSizeMB=4096', insertafter: '' }
+  notify: restart vm

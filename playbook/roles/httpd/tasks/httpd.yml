@@ -1,0 +1,27 @@
+---
+- name: httpd | install
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 86400
+  with_items: "{{ httpd_installs }}"
+
+- name: httpd | service started and enabled
+  service:
+    name: apache2
+    state: started
+    enabled: true
+
+- name: httpd | add user to httpd group
+  user: name={{ item }} groups=www-data append=yes
+  with_items: '{{ httpd_users }}'
+
+- name: httpd | Document root
+  file:
+    path: /var/www/html
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: 0775
+    recurse: true

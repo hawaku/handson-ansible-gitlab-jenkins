@@ -1,0 +1,4 @@
+---
+- name: rcS | delete files in /tmp
+  lineinfile: 'dest=/etc/default/rcS regexp="^TMPTIME=" insertafter="^#TMPTIME=" line="TMPTIME=10"'
+  when: ansible_os_family == 'Debian'

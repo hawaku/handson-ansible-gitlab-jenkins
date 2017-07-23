@@ -1,0 +1,3 @@
+---
+- include: httpd.yml
+  when: httpd_installs is defined

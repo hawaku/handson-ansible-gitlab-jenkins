@@ -1,0 +1,4 @@
+---
+- name: timezone | set time zone
+  when: ansible_date_time.tz != 'JST' and ansible_os_family == 'Debian'
+  command: timedatectl set-timezone Asia/Tokyo
